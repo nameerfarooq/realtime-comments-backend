@@ -4,6 +4,7 @@ const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
 const commentRoutes = require("./routes/comments");
+const tokenRoutes = require("./routes/tokens");
 
 // Initialize app and server
 const app = express();
@@ -19,8 +20,9 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 app.use("/comments", commentRoutes);
+app.use("/tokens", tokenRoutes);
 
-// MongoDB connection
+// MongoDB connectokens
 mongoose
   .connect("mongodb://localhost:27017/commentsDB")
   .then(() => {
