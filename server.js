@@ -11,7 +11,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
 });
@@ -24,7 +24,12 @@ app.use("/tokens", tokenRoutes);
 
 // MongoDB connectokens
 mongoose
-  .connect("mongodb://localhost:27017/commentsDB")
+  .connect(
+    "mongodb+srv://nameerfarooq18:60FOiCtzfzAaP1Xv@cluster0.cttpy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    {
+      ssl: true,
+    }
+  )
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -43,7 +48,6 @@ io.on("connection", (socket) => {
   socket.on("reply", (reply) => {
     io.emit("reply", reply); // Broadcast reply to all clients
   });
-
 
   socket.on("like", (likeData) => {
     io.emit("like", likeData); // Broadcast like to all clients
