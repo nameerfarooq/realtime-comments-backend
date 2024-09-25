@@ -66,4 +66,68 @@ router.post("/reply", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+
+
+// Like or unlike a comment
+router.post('/like', async (req, res) => {
+  const { commentId, username } = req.body;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+    const likeIndex = comment.likes.indexOf(username);
+    console.log("MY LIKE INDEX :",likeIndex)
+    console.log("username :",username)
+    if (likeIndex === -1) {
+      // Like the comment
+      comment.likes.push(username);
+    } else {
+      // Unlike the comment
+      comment.likes.splice(likeIndex, 1);
+    }
+
+    await comment.save();
+    res.json(comment);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Like or unlike a reply
+router.post('/reply/like', async (req, res) => {
+  const { commentId, replyIndex, username } = req.body;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    const reply = comment.replies[replyIndex];
+    if (!reply) {
+      return res.status(404).json({ message: "Reply not found" });
+    }
+
+    const likeIndex = reply.likes.indexOf(username);
+
+    if (likeIndex === -1) {
+      // Like the reply
+      reply.likes.push(username);
+    } else {
+      // Unlike the reply
+      reply.likes.splice(likeIndex, 1);
+    }
+
+    await comment.save();
+    res.json(reply);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+
 module.exports = router;

@@ -43,7 +43,15 @@ io.on("connection", (socket) => {
   socket.on("reply", (reply) => {
     io.emit("reply", reply); // Broadcast reply to all clients
   });
-  
+
+
+  socket.on("like", (likeData) => {
+    io.emit("like", likeData); // Broadcast like to all clients
+  });
+
+  socket.on("replyLike", (likeData) => {
+    io.emit("replyLike", likeData); // Broadcast reply like to all clients
+  });
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
