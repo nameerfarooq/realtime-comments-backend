@@ -5,25 +5,19 @@ const Token = require("../models/Token");
 const router = express.Router();
 
 // Get comments by tokenId
-router.get("/:tokenId", async (req, res) => {
-  const { tokenId } = req.params;
+router.get("/:tokenAddress", async (req, res) => {
+  const { tokenAddress } = req.params;
 
   try {
-    let token;
-    // Check if token exists, create a dummy one if not
-    // Allow string tokenId for testing purposes
-    if (mongoose.Types.ObjectId.isValid(tokenId)) {
-      token = await Token.findById(tokenId);
+    const token = await Token.findOne({tokenAddress});
+    
+    if (!token) {
+      return res
+        .status(400)
+        .json({ message: "No token found with this address" });
     }
-    // if (!token) {
-    //   const newToken = new Token({
-    //     title: "Dummy Token",
-    //     content: "This is a dummy token",
-    //   });
-    //   token = await newToken.save();
-    // }
 
-    const comments = await Comment.find({ tokenId: token._id }).sort({
+    const comments = await Comment.find({tokenAddress}).sort({
       createdAt: -1,
     });
     res.json(comments);
@@ -34,8 +28,8 @@ router.get("/:tokenId", async (req, res) => {
 
 // Create new comment
 router.post("/", async (req, res) => {
-  const { tokenId, username, text } = req.body;
-  const newComment = new Comment({ tokenId, username, text });
+  const { tokenAddress, username, text } = req.body;
+  const newComment = new Comment({ tokenAddress, username, text });
   try {
     const savedComment = await newComment.save();
     res.json(savedComment);
@@ -67,10 +61,8 @@ router.post("/reply", async (req, res) => {
   }
 });
 
-
-
 // Like or unlike a comment
-router.post('/like', async (req, res) => {
+router.post("/like", async (req, res) => {
   const { commentId, username } = req.body;
 
   try {
@@ -79,8 +71,8 @@ router.post('/like', async (req, res) => {
       return res.status(404).json({ message: "Comment not found" });
     }
     const likeIndex = comment.likes.indexOf(username);
-    console.log("MY LIKE INDEX :",likeIndex)
-    console.log("username :",username)
+    console.log("MY LIKE INDEX :", likeIndex);
+    console.log("username :", username);
     if (likeIndex === -1) {
       // Like the comment
       comment.likes.push(username);
@@ -97,7 +89,7 @@ router.post('/like', async (req, res) => {
 });
 
 // Like or unlike a reply
-router.post('/reply/like', async (req, res) => {
+router.post("/reply/like", async (req, res) => {
   const { commentId, replyIndex, username } = req.body;
 
   try {
@@ -127,7 +119,5 @@ router.post('/reply/like', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-
 
 module.exports = router;
