@@ -25,11 +25,11 @@ app.use("/tokens", tokenRoutes);
 // MongoDB connectokens
 mongoose
   .connect(
-    "mongodb+srv://nameerfarooq18:60FOiCtzfzAaP1Xv@cluster0.cttpy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    // "mongodb://localhost:27017/freshComment",
-    {
-      ssl: true,
-    }
+    // "mongodb+srv://nameerfarooq18:60FOiCtzfzAaP1Xv@cluster0.cttpy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    "mongodb://localhost:27017/freshComment",
+    // {
+    //   ssl: true,
+    // }
   )
   .then(() => {
     console.log("Connected to MongoDB");

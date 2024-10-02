@@ -18,7 +18,7 @@ router.get("/:tokenAddress", async (req, res) => {
     }
 
     const comments = await Comment.find({tokenAddress}).sort({
-      createdAt: -1,
+      createdAt: 1,
     });
     res.json(comments);
   } catch (err) {
