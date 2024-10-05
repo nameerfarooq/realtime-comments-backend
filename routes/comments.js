@@ -9,15 +9,15 @@ router.get("/:tokenAddress", async (req, res) => {
   const { tokenAddress } = req.params;
 
   try {
-    const token = await Token.findOne({tokenAddress});
-    
+    const token = await Token.findOne({ tokenAddress });
+
     if (!token) {
       return res
         .status(400)
         .json({ message: "No token found with this address" });
     }
 
-    const comments = await Comment.find({tokenAddress}).sort({
+    const comments = await Comment.find({ tokenAddress }).sort({
       createdAt: 1,
     });
     res.json(comments);
@@ -40,7 +40,6 @@ router.post("/", async (req, res) => {
 // Add a reply to a comment
 router.post("/reply", async (req, res) => {
   try {
-    console.log("commentId : ");
     console.log("commentId : ", req.body.commentId);
     const comment = await Comment.findById(req.body.commentId);
     if (!comment) {
@@ -54,7 +53,6 @@ router.post("/reply", async (req, res) => {
 
     comment.replies.push(newReply);
     await comment.save();
-
     res.json(newReply);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -64,7 +62,7 @@ router.post("/reply", async (req, res) => {
 // Like or unlike a comment
 router.post("/like", async (req, res) => {
   const { commentId, username } = req.body;
-
+  console.log("commentId :", commentId);
   try {
     const comment = await Comment.findById(commentId);
     if (!comment) {
@@ -91,7 +89,9 @@ router.post("/like", async (req, res) => {
 // Like or unlike a reply
 router.post("/reply/like", async (req, res) => {
   const { commentId, replyIndex, username } = req.body;
-
+  console.log("commendID :", commentId);
+  console.log("replyIndex :", replyIndex);
+  console.log("username :", username);
   try {
     const comment = await Comment.findById(commentId);
     if (!comment) {
