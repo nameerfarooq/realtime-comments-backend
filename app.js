@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -23,15 +24,14 @@ app.use("/comments", commentRoutes);
 app.use("/tokens", tokenRoutes);
 
 // MongoDB connectokens
-mongoose
+mongoose 
   .connect(
-    "mongodb+srv://nameerfarooq18:60FOiCtzfzAaP1Xv@cluster0.cttpy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-    // "mongodb://localhost:27017/freshComment",
+    process.env.MONGO_URI,
     {
-      ssl: true,
+      ssl: process.env.MONGO_SSL || false,
     }
   )
-  .then(() => {
+  .then(() => { 
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
