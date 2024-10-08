@@ -1,4 +1,5 @@
 require("dotenv").config();
+console.log(process.env);
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -10,6 +11,7 @@ const tokenRoutes = require("./routes/tokens");
 // Initialize app and server
 const app = express();
 const server = http.createServer(app);
+
 const io = socketIo(server, {
   cors: {
     origin: process.env.FRONTEND_URL,
@@ -17,28 +19,25 @@ const io = socketIo(server, {
   },
 });
 
-// Middleware
-app.use(cors());
+// Middleware 
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/comments", commentRoutes);
 app.use("/tokens", tokenRoutes);
 
-// MongoDB connectokens
-mongoose 
-  .connect(
-    process.env.MONGO_URI,
-    {
-      ssl: process.env.MONGO_SSL || false,
-    }
-  )
+// MongoDB  connectokens
+mongoose
+  .connect(process.env.MONGO_URI, {
+    ssl: process.env.MONGO_SSL == 'false' ? false : true || false,
+  })
   .then(() => { 
-    console.log("Connected to MongoDB");
+    console.log("Connected to MongoDB"); 
   })
   .catch((err) => {
     console.error("Failed to connect to MongoDB", err);
   });
 // Socket.io connection
-io.on("connection", (socket) => {
+io.on("connection", (socket) => { 
   console.log("New client connected");
 
   socket.on("comment", (comment) => {
