@@ -3,7 +3,7 @@
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-  tokenAddress: {
+  tokenDBId: {
     type: String, // Instead of ObjectId, now it's a string
     required: true,
     ref: "Token" // Reference to the Token model

@@ -3,15 +3,15 @@ const Token = require("../models/Token");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  const { tokenName, tokenAddress,creatorAddress } = req.body;
+  const {  tokenDBId,creatorAddress } = req.body;
   try {
-    const existingToken = await Token.findOne({ tokenAddress });
+    const existingToken = await Token.findOne({ tokenDBId });
     if (existingToken) {
       return res
         .status(400)
         .json({ message: "Token with this address already exists" });
     }
-    const newToken = new Token({ tokenName, tokenAddress,creatorAddress });
+    const newToken = new Token({tokenDBId,creatorAddress });
     const savedToken = await newToken.save();
     res.status(201).json(savedToken);
   } catch (error) {

@@ -5,19 +5,19 @@ const Token = require("../models/Token");
 const router = express.Router();
 
 // Get comments by tokenId
-router.get("/:tokenAddress", async (req, res) => {
-  const { tokenAddress } = req.params;
+router.get("/:tokenDBId", async (req, res) => {
+  const { tokenDBId } = req.params;
 
   try {
-    const token = await Token.findOne({ tokenAddress });
+    const token = await Token.findOne({ tokenDBId });
 
     if (!token) {
       return res
         .status(400)
-        .json({ message: "No token found with this address" });
+        .json({ message: "No token found with this token Database ID" });
     }
 
-    const comments = await Comment.find({ tokenAddress }).sort({
+    const comments = await Comment.find({ tokenDBId }).sort({
       createdAt: 1,
     });
     res.json(comments);
@@ -28,8 +28,8 @@ router.get("/:tokenAddress", async (req, res) => {
 
 // Create new comment
 router.post("/", async (req, res) => {
-  const { tokenAddress, username, text } = req.body;
-  const newComment = new Comment({ tokenAddress, username, text });
+  const { tokenDBId, username, text } = req.body;
+  const newComment = new Comment({ tokenDBId, username, text });
   try {
     const savedComment = await newComment.save();
     res.json(savedComment);
