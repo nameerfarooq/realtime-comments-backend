@@ -1,3 +1,5 @@
+/** @format */
+
 require("dotenv").config();
 console.log(process.env);
 const express = require("express");
@@ -19,7 +21,7 @@ const io = socketIo(server, {
   },
 });
 
-// Middleware 
+// Middleware
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use("/comments", commentRoutes);
@@ -28,16 +30,16 @@ app.use("/tokens", tokenRoutes);
 // MongoDB  connectokens
 mongoose
   .connect(process.env.MONGO_URI, {
-    ssl: process.env.MONGO_SSL == 'false' ? false : true || false,
+    ssl: process.env.MONGO_SSL == "false" ? false : true || false,
   })
-  .then(() => { 
-    console.log("Connected to MongoDB"); 
+  .then(() => {
+    console.log("Connected to MongoDB");
   })
   .catch((err) => {
     console.error("Failed to connect to MongoDB", err);
   });
 // Socket.io connection
-io.on("connection", (socket) => { 
+io.on("connection", (socket) => {
   console.log("New client connected");
 
   socket.on("comment", (comment) => {
