@@ -1,3 +1,5 @@
+/** @format */
+
 const express = require("express");
 const mongoose = require("mongoose");
 const Comment = require("../models/Comment");
@@ -28,15 +30,28 @@ router.get("/:tokenDBId", async (req, res) => {
 
 // Create new comment
 router.post("/", async (req, res) => {
-  const { tokenDBId, username, text } = req.body;
-  const newComment = new Comment({ tokenDBId, username, text });
+  const { tokenDBId, username, text, creatorAddress } = req.body;
   try {
+    let token = await Token.findOne({ tokenDBId });
+    if (!token) {
+      if (!creatorAddress) {
+        return res.status(400).json({
+          message:
+            "Token does not exist, and creatorAddress is required to create it.",
+        });
+      }
+
+      token = new Token({ tokenDBId, creatorAddress });
+      await token.save();
+    }
+    const newComment = new Comment({ tokenDBId, username, text });
     const savedComment = await newComment.save();
     res.json(savedComment);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
+
 // Add a reply to a comment
 router.post("/reply", async (req, res) => {
   try {
@@ -115,6 +130,23 @@ router.post("/reply/like", async (req, res) => {
 
     await comment.save();
     res.json(reply);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get tokenDBIds of the most recent comments
+router.get("/recent/comments", async (req, res) => {
+  try {
+    // Fetch the most recent comments, sorted by createdAt in descending order
+    const recentComments = await Comment.find().sort({ createdAt: -1 }); // Most recent comments first
+
+    // Extract unique tokenDBIds from the recent comments
+    const tokenDBIds = [
+      ...new Set(recentComments.map((comment) => comment.tokenDBId)),
+    ];
+
+    res.json(tokenDBIds);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
